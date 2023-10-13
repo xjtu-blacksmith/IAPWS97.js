@@ -4,24 +4,22 @@ var gulp = require('gulp'),
 	jshint = require('gulp-jshint'),
 	KarmaServer = require('karma').Server;
 
-gulp.task('default', ['lint', 'all', 'pt', 'ps', 'ph', 'hs', 'test']);
+async function test () {
+    await new KarmaServer({
+		configFile: __dirname + '/tests/karma.conf.js'
+	}).start();
+}
 
-gulp.task('test', ['all'], function(done) {
-   new KarmaServer({
-	   configFile: __dirname + '/tests/karma.conf.js'
-   }, done).start();
-});
-
-gulp.task('lint', function() {
+function lint () {
   return gulp.src('./src/**/*.js')
     .pipe(jshint())
     .pipe(jshint.reporter('default'));
-});
+}
 
-gulp.task('all', function() {
+function all () {
   return gulp.src([
-       './src/neutriumJS.thermo.IAPWS97.js',
-	   './src/neutriumJS.thermo.IAPWS97.PT.js',
+       './src/neutriumjs.thermo.iapws97.js',
+	   './src/neutriumjs.thermo.iapws97.pT.js',
 	   './src/neutriumJS.thermo.IAPWS97.PS.js',
 	   './src/neutriumJS.thermo.IAPWS97.PH.js',
 	   './src/neutriumJS.thermo.IAPWS97.HS.js'
@@ -29,9 +27,9 @@ gulp.task('all', function() {
   	.pipe(concat('neutriumJS.thermo.IAPWS97.min.js'))
     .pipe(uglify())
     .pipe(gulp.dest('./dist'));
-});
+}
 
-gulp.task('pt', function() {
+function pt () {
   return gulp.src([
        './src/neutriumJS.thermo.IAPWS97.js',
 	   './src/neutriumJS.thermo.IAPWS97.PT.js',
@@ -39,9 +37,9 @@ gulp.task('pt', function() {
   	.pipe(concat('neutriumJS.thermo.IAPWS97.pt.min.js'))
     .pipe(uglify())
     .pipe(gulp.dest('./dist'));
-});
+}
 
-gulp.task('ps', function() {
+function ps () {
   return gulp.src([
        './src/neutriumJS.thermo.IAPWS97.js',
 	   './src/neutriumJS.thermo.IAPWS97.PT.js',
@@ -50,22 +48,21 @@ gulp.task('ps', function() {
   	.pipe(concat('neutriumJS.thermo.IAPWS97.pt-ps.min.js'))
     .pipe(uglify())
     .pipe(gulp.dest('./dist'));
-});
+}
 
-gulp.task('ph', function() {
+function ph () {
   return gulp.src([
-       './src/neutriumJS.thermo.IAPWS97..js',
-	   './src/neutriumJS.thermo.IAPWS97.PT.js',
+       './src/neutriumJS.thermo.IAPWS97.js',
 	   './src/neutriumJS.thermo.IAPWS97.PH.js',
     ])
   	.pipe(concat('neutriumJS.thermo.IAPWS97.pt-ph.min.js'))
     .pipe(uglify())
     .pipe(gulp.dest('./dist'));
-});
+}
 
-gulp.task('hs', function() {
+function hs () {
   return gulp.src([
-       './src/neutriumJS.thermo.IAPWS97..js',
+       './src/neutriumJS.thermo.IAPWS97.js',
 	   './src/neutriumJS.thermo.IAPWS97.PT.js',
 	   './src/neutriumJS.thermo.IAPWS97.PH.js',
 	   './src/neutriumJS.thermo.IAPWS97.HS.js',
@@ -73,4 +70,6 @@ gulp.task('hs', function() {
   	.pipe(concat('neutriumJS.thermo.IAPWS97.pt-ph-hs.min.js'))
     .pipe(uglify())
     .pipe(gulp.dest('./dist'));
-});
+}
+
+exports.default = gulp.series(lint, all, pt, ps, ph, hs, test);
